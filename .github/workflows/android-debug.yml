@@ -35,7 +35,7 @@ jobs:
           packages: platform-tools
 
       - name: Install Android SDK platform
-        run: sdkmanager "platforms;android-37" "platform-tools"
+        run: sdkmanager "platforms;android-36" "platform-tools"
 
       - name: Build Debug APK
         run: ./gradlew --no-daemon :app:assembleDebug
