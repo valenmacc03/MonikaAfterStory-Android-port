@@ -1,14 +1,20 @@
 plugins {
     id 'com.android.application'
-    id 'com.google.gms.google-services'
 }
 
+def googleServicesFile = file("google-services.json")
+if (googleServicesFile.exists()) {
+    apply plugin: 'com.google.gms.google-services'
+}
 
 def localPropertiesFile = rootProject.file("local.properties")
-
-
 def localProperties = new Properties()
-localProperties.load(new FileInputStream(localPropertiesFile))
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.withInputStream { localProperties.load(it) }
+}
+
+def releaseSigningKeys = ["key.store", "key.store.password", "key.alias", "key.alias.password"]
+def hasReleaseSigning = releaseSigningKeys.every { localProperties.getProperty(it) }
 
 android {
     compileSdkVersion 37
@@ -26,13 +32,14 @@ android {
         }
     }
 
-
-    signingConfigs {
-        release {
-            storeFile file(localProperties["key.store"])
-            storePassword localProperties["key.store.password"]
-            keyAlias localProperties['key.alias']
-            keyPassword localProperties["key.alias.password"]
+    if (hasReleaseSigning) {
+        signingConfigs {
+            release {
+                storeFile file(localProperties["key.store"])
+                storePassword localProperties["key.store.password"]
+                keyAlias localProperties['key.alias']
+                keyPassword localProperties["key.alias.password"]
+            }
         }
     }
 
@@ -49,7 +56,9 @@ android {
         }
 
         release {
-            signingConfig signingConfigs.release
+            if (hasReleaseSigning) {
+                signingConfig signingConfigs.release
+            }
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
@@ -64,8 +73,6 @@ android {
             }
         }
     }
-
-
 
     androidResources {
         noCompress = [ 'ogv', 'avi', 'mpg', 'webm', 'mkv', 'mp4', 'mp3', 'mp2', 'ogg', 'opus', 'flac', 'rpyc', 'rpymc', 'rpyb', ]
