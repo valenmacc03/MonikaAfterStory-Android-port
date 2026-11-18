@@ -17,14 +17,14 @@ def releaseSigningKeys = ["key.store", "key.store.password", "key.alias", "key.a
 def hasReleaseSigning = releaseSigningKeys.every { localProperties.getProperty(it) }
 
 android {
-    compileSdkVersion 37
+    compileSdkVersion 36
 
     namespace "com.z.mas.portby.just6889"
 
     defaultConfig {
         applicationId "com.z.mas.portby.just6889"
         minSdkVersion 21
-        targetSdkVersion 37
+        targetSdkVersion 36
         versionCode 1757713338
         versionName "3.0.2"
         ndk {
